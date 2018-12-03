@@ -18,72 +18,108 @@ def tag_time(email):
         # Change the email to the tagged header
         email = re.sub(time_header, tagged_time_header, email)
 
-        # Parse the start/end time and replace the times in the text
-        tag_abstract(stime, etime, email)
+        # Tag all the stimes in the abstract
+        if stime:
+            email = tag_abstract(stime, "stime", email)
+
+        # Tag all the etimes in the abstract
+        if etime:
+            email = tag_abstract(etime, "etime", email)
 
     return email
 
 
 def tag_times_header(header):
-    time_pattern = r"(\d\d?):(\d\d) ?(AM|PM)?"
+    """Tag the time header"""
+
+    time_pattern = r"(\d\d?:\d\d(?: ?AM| ?PM)?)"
 
     start_time = None
     end_time = None
 
     # If header contains a start and end time it will have a hyphen
     if "-" in header:
-        pattern = f"({time_pattern})"
-        replace = r"<stime>\1</stime>"
-        header = re.sub(pattern, replace, header)
+        pattern = f"{time_pattern} - {time_pattern}"
+        replace = r"<stime>\1</stime> - <etime>\2</etime>"
 
+        # Get the start and end times
         search = re.search(pattern, header)
+        start_time = search.group(1)
+        end_time = search.group(2)
 
-        start_time = {
-            "hour": search.groups(2)[0],
-            "minute": search.groups(3)[0],
-            "suffix": search.groups(4)[0],
-        }
+        # Tag the header
+        header = re.sub(pattern, replace, header)
     else:
-        pattern = f"({time_pattern}) - ({time_pattern})"
-        replace = r"<stime>\1</stime> - <etime>\5</etime>"
-        header = re.sub(pattern, replace, header)
+        pattern = f"{time_pattern}"
+        replace = r"<stime>\1</stime>"
 
+        # Get the start time
         search = re.search(pattern, header)
+        start_time = search.group(1)
 
-        start_time = {
-            "hour": search.groups(2)[0],
-            "minute": search.groups(3)[0],
-            "suffix": search.groups(4)[0],
-        }
-
-        end_time = {
-            "hour": search.groups(2)[0],
-            "minute": search.groups(3)[0],
-            "suffix": search.groups(4)[0],
-        }
+        # Tag the header
+        header = re.sub(pattern, replace, header)
 
     return [header, start_time, end_time]
 
 
-def tag_abstract(stime, etime, text):
+def tag_abstract(time, type, email):
     """Tags any occurances of the time in the abstract"""
 
-    if stime:
-        parse_time(stime)
+    # Parse the time
+    hours, minutes, suffix = parse_time(time)
 
-    if etime:
-        parse_time(etime)
+    # Generate possible regex patterns
+    time_patterns = generate_time_patterns(hours, minutes, suffix)
 
-    return text
+    for pattern in time_patterns:
+        pattern = rf"(?<!<{type}>)({pattern})(?!</{type}>)"
+        tagged_time = rf"<{type}>\1</{type}>"
+
+        email = re.sub(pattern, tagged_time, email, flags=re.IGNORECASE)
+
+    # Handle edge case 12-1pm -> 1pm will already be tagged, so tag the start time
+    if type == "etime":
+        pattern = r"(\d\d?)( ?- ?<etime>)"
+        replace = r"<stime>\1</stime>\2"
+
+        email = re.sub(pattern, replace, email, flags=re.IGNORECASE)
+
+    return email
 
 
 def parse_time(time):
+    """Takes in a time and returns it in 12 hour time"""
+    pattern = r"(\d\d?):(\d\d)(?: (AM)| (PM))?"
+    search = re.search(pattern, time)
 
-    if ":" in time:
-        pattern = r"(\d\d?):(\d\d)( ?pm| ?am| ?p.m| ?a.m| ?p.m.| ?a.m)?"
-        result = re.search(pattern, time, flags=re.IGNORECASE)
-        # print(time, result.groups(1))
-    else:
-        pattern = r"[^\d](\d)( ?pm| ?am| ?p.m| ?a.m| ?p.m.| ?a.m)"
-        result = re.search(pattern, time, flags=re.IGNORECASE)
-        # print(time, result.groups())
+    hours = search.group(1)
+    minutes = search.group(2)
+    suffix = (
+        search.group(3) or search.group(4) or "AM"
+    )  # Defaults to AM if a suffix isn't provided
+
+    return [hours, minutes, suffix]
+
+
+def generate_time_patterns(hours, minutes, suffix):
+    """Generates all possible formats of a time"""
+
+    times = []
+
+    if suffix == "AM":
+        times += [rf"({hours}:{minutes}(?: ?am| ?a.m| ?a.m)?)"]
+
+        if minutes == "00":
+            times += [rf"([^\d]{hours}(?: ?am| ?a.m| ?a.m))"]
+
+    if suffix == "PM":
+        times += [rf"({hours}:{minutes}(?: ?pm| ?p.m| ?p.m.)?)"]
+
+        if minutes == "00":
+            times += [rf"((?<!\d){hours}(?: ?pm| ?p.m| ?p.m.))"]
+
+            if hours == "12":
+                times += ["noon"]
+
+    return times
