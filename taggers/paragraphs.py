@@ -18,7 +18,7 @@ def tag_paragraphs(email):
     abstract = split_email.group(2)
 
     # Tag each paragraph in the abstract
-    pattern = r"\n([\S][\S\s]+?)(\n\n|\n$)"
+    pattern = r"\n([\S][\S\s]+?\.(?:\n|$))"
     replace = r"\n<paragraph>\1</paragraph>\2"
     abstract = re.sub(pattern, replace, abstract)
 
