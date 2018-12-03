@@ -65,42 +65,6 @@ def tag_times_header(header):
     return [header, start_time, end_time]
 
 
-@DeprecationWarning
-def tag_times_header(text):
-
-    # Handle cases like 7:00PM
-    pattern = r"(\d\d?:\d\d(?: ?pm| ?am| ?p.m| ?a.m| ?p.m.| ?a.m)?)"
-    replace = r"<stime>\1</stime>"
-    text = re.sub(pattern, replace, text, flags=re.IGNORECASE)
-
-    # Handle cases like 7 PM
-    pattern = r"([^\d]\d(?: ?pm| ?am| ?p.m| ?a.m| ?p.m.| ?a.m))"
-    replace = r"<stime>\1</stime>"
-    text = re.sub(pattern, replace, text, flags=re.IGNORECASE)
-
-    # Handle noon
-    pattern = r"(\s)(noon|Noon)(\s)"
-    replace = r"\1<stime>\2</stime>\3"
-    text = re.sub(pattern, replace, text)
-
-    # Change adjacent times into one time tag
-    text = text.replace("</stime> <stime>", " ")
-
-    # If a second time exists, change it to <etime />
-    pattern = r"(<stime>.+?</stime>.+?)<stime>(.+?)</stime>"
-    replace = r"\1<etime>\2</etime>"
-    text = re.sub(pattern, replace, text)
-
-    stime = re.search("<stime>(.+?)</stime>", text)
-    etime = re.search("<etime>(.+?)</etime>", text)
-
-    return [
-        text,
-        stime.groups(1)[0] if stime else None,
-        etime.groups(1)[0] if etime else None,
-    ]
-
-
 def tag_abstract(stime, etime, text):
     """Tags any occurances of the time in the abstract"""
 
