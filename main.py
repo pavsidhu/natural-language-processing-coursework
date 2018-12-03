@@ -6,7 +6,7 @@ import sys
 
 def main(training):
     path = "/training" if training else "/untagged"
-    a = 90
+
     original_emails = get_emails(path)
 
     emails = original_emails
