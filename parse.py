@@ -8,7 +8,6 @@ from taggers.time import tag_time
 from taggers.date import tag_date
 from taggers.speaker import tag_speaker
 from taggers.location import tag_location
-from utils import flatten
 
 tags = ["sentence", "paragraph", "stime", "etime", "location", "speaker"]
 
@@ -57,16 +56,11 @@ def tag_emails(emails, tags):
 def tag_email(email, tags):
     """Tags a single email"""
 
-    # Seperate joint names into unique seperate elements of a set
-    # i.e. ["John Smith", "John"] -> ["John", "Smith"]
-    tagged_speakers = flatten([s.lower().split() for s in tags["speaker"]])
-    tagged_speakers = set(tagged_speakers)
-
     email = tag_paragraphs(email)
     email = tag_sentences(email)
-    # email = tag_time(email)
-    # email = tag_date(email)
-    # email = tag_speaker(email, tagged_speakers)
-    # email = tag_location(email, tags["location"])
+    email = tag_time(email)
+    email = tag_date(email)
+    email = tag_speaker(email, tags["speaker"])
+    email = tag_location(email, tags["location"])
 
     return email
