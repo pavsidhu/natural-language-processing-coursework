@@ -1,0 +1,15 @@
+# MacOS
+.DS_STORE
+
+# Python
+__pycache__
+*.pyc
+.env
+
+# Source / Output data
+training
+untagged
+output
+
+# VSCode
+.vscode
