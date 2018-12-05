@@ -13,6 +13,8 @@ from utils import tags
 # Regex patterns to match tags
 patterns = [str.format(r"<{}>([\S\s]+?)</{}>", tag, tag) for tag in tags]
 
+# Regex pattern to remove unneeded tags from extracted data
+nested_tag_pattern = r"</?(?:" + r"|".join(tags) + r")>"
 
 def extract_tag_data(emails):
     """Extracts all the data from the tags in each email"""
@@ -21,10 +23,13 @@ def extract_tag_data(emails):
     extracted_tags_data = dict((tag, []) for tag in tags)
 
     for email in emails:
-
         # Search for instances of each tag and add it to the results
         for tag, pattern in zip(tags, patterns):
             results = re.findall(pattern, email)
+
+            # Remove nested tags from data i.e. sentence tags in paragraphs
+            for i, result in enumerate(results):
+                results[i] = re.sub(nested_tag_pattern, "", result)
 
             extracted_tags_data[tag].extend(results)
 
