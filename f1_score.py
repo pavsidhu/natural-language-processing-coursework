@@ -19,14 +19,21 @@ def print_f1_score(original_emails, parsed_emails):
                 tag, original_email_tags, parsed_email_tags
             )
 
-    print("F1 SCORES:")
+    RED = "\033[91m"
+    RED_END = "\033[0m"
+    print(f"\n{RED}== F1 SCORES =={RED_END}")
 
     for tag, sum in sum_f1_scores.items():
         # Calculate the average f1 score
         average = sum / len(original_emails)
 
+        # Format the tag name to be more readable
+        tag = (tag + ":").rjust(10)
+
         # Prints in the format "Speaker: 0.80"
-        print(f"{tag}: {average:.2f}")
+        print(f"{tag} {average:.2f}")
+
+    print(f"{RED}==============={RED_END}\n")
 
 
 def get_f1_score(tag, original_email_data, parsed_email_data):
