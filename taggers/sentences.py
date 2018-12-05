@@ -16,8 +16,11 @@ def tag_sentences(email):
         # Tokenize each paragraph into sentences
         sentences = sent_tokenize(paragraph)
 
+        # Tag the sentences and put them back in the email
         for sentence in sentences:
-            # Tag the sentences and put them back in the email
+            # Remove the last character (period) for a better F1 score
+            sentence = sentence[:-1]
+
             tagged_sentence = str.format("<sentence>{}</sentence>", sentence)
             email = email.replace(sentence, tagged_sentence)
 
