@@ -5,7 +5,6 @@ import re
 from taggers.paragraphs import tag_paragraphs
 from taggers.sentences import tag_sentences
 from taggers.time import tag_time
-from taggers.date import tag_date
 from taggers.speaker import tag_speaker
 from taggers.location import tag_location
 from utils import tags
@@ -15,6 +14,7 @@ patterns = [str.format(r"<{}>([\S\s]+?)</{}>", tag, tag) for tag in tags]
 
 # Regex pattern to remove unneeded tags from extracted data
 nested_tag_pattern = r"</?(?:" + r"|".join(tags) + r")>"
+
 
 def extract_tag_data(emails):
     """Extracts all the data from the tags in each email"""
@@ -63,7 +63,6 @@ def tag_email(email, tags):
     email = tag_paragraphs(email)
     email = tag_sentences(email)
     email = tag_time(email)
-    email = tag_date(email)
     email = tag_speaker(email, tags["speaker"])
     email = tag_location(email, tags["location"])
 
