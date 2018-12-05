@@ -26,7 +26,7 @@ def print_f1_score(original_emails, parsed_emails):
         average = sum / len(original_emails)
 
         # Prints in the format "Speaker: 0.80"
-        print(f"{tag.title()}: {average:.2f}")
+        print(f"{tag}: {average:.2f}")
 
 
 def get_f1_score(tag, original_email_data, parsed_email_data):
