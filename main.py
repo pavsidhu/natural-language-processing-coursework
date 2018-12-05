@@ -1,6 +1,6 @@
 from file_io import *
 from parse import *
-from compare import *
+from f1_score import *
 import sys
 
 
@@ -9,19 +9,17 @@ def main(training):
 
     original_emails = get_emails(path)
 
-    emails = original_emails
-    tags = extract_tag_data(emails)
+    tags = extract_tag_data(original_emails if training else get_emails("/training"))
 
     # Remove tags from tagged data if training
-    if training:
-        emails = remove_tags(emails)
+    emails = remove_tags(original_emails) if training else original_emails
 
-    # Tags the email
+    # Tag the emails
     parsed_emails = tag_emails(emails, tags)
 
     # Compare original data with parsed data to check accuracy
     if training:
-        compare_emails(original_emails, parsed_emails)
+        print_f1_score(original_emails, parsed_emails)
 
     output(parsed_emails)
 

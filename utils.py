@@ -1,5 +1,7 @@
 import re
 
+tags = ["sentence", "paragraph", "stime", "etime", "location", "speaker"]
+
 flatten = lambda list: [item for sublist in list for item in sublist]
 
 

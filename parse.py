@@ -8,8 +8,7 @@ from taggers.time import tag_time
 from taggers.date import tag_date
 from taggers.speaker import tag_speaker
 from taggers.location import tag_location
-
-tags = ["sentence", "paragraph", "stime", "etime", "location", "speaker"]
+from utils import tags
 
 # Regex patterns to match tags
 patterns = [str.format(r"<{}>([\S\s]+?)</{}>", tag, tag) for tag in tags]
