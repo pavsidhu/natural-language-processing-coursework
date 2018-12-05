@@ -1,6 +1,8 @@
 from nltk import sent_tokenize
 import re
 
+from utils import split_email
+
 
 def tag_sentences(email):
     """
@@ -8,9 +10,11 @@ def tag_sentences(email):
         <sentence>Est occaecat laborum dolor enim consequat nostrud do.</sentence>
     """
 
+    header, abstract = split_email(email)
+
     # Get the contents of all the existing paragraphs
     pattern = r"<paragraph>([\S\s]+?)</paragraph>"
-    paragraphs = re.findall(pattern, email)
+    paragraphs = re.findall(pattern, abstract)
 
     for paragraph in paragraphs:
         # Tokenize each paragraph into sentences
@@ -19,9 +23,9 @@ def tag_sentences(email):
         # Tag the sentences and put them back in the email
         for sentence in sentences:
             # Remove the last character (period) for a better F1 score
-            sentence = sentence[:-1]
+            sentence = sentence[:-1] if sentence[-1] == "." else sentence
 
             tagged_sentence = str.format("<sentence>{}</sentence>", sentence)
-            email = email.replace(sentence, tagged_sentence)
+            abstract = abstract.replace(sentence, tagged_sentence)
 
-    return email
+    return header + abstract
