@@ -9,7 +9,7 @@ def tag_speaker(email, tagged_speakers):
         <speaker>{{ speaker }}</speaker>
     """
 
-    email, success = tag_speaker_with_regex(email)
+    email, success = tag_with_regex(email)
 
     if success:
         return email
@@ -29,7 +29,7 @@ def tag_speaker(email, tagged_speakers):
     return email
 
 
-def tag_speaker_with_regex(email):
+def tag_with_regex(email):
     """
     Attempt to find the speaker using Regex
     """
