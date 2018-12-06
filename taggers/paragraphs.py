@@ -18,8 +18,8 @@ def tag_paragraphs(email):
     abstract = split_email.group(2)
 
     # Tag each paragraph in the abstract
-    pattern = r"\n([A-Z0-9\"][\S\s]+?\.)(\n|$)"
-    replace = r"\n<paragraph>\1</paragraph>\2"
+    pattern = r"\n([A-Z0-9\"'](?:.+(?:\n(?!\n)))+.+\.)"
+    replace = r"\n<paragraph>\1</paragraph>"
     abstract = re.sub(pattern, replace, abstract)
 
     # Put the meta data and abstract back together again
