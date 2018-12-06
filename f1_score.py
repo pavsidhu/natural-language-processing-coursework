@@ -60,6 +60,7 @@ def get_f1_score(tag, original_email_data, parsed_email_data):
         if false_positives
         else 1.0
     )
+
     recall = (true_positives / false_negatives) if false_negatives else 1.0
 
     f1 = (
