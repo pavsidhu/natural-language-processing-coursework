@@ -35,7 +35,7 @@ def tag_with_regex(email):
     """
 
     # Search for "SPEAKER: Michael Lee, CTO of Tech LTD"
-    pattern = r"(?:Speaker|Who):\s([^,<(\[\n]*)"
+    pattern = r"(?:Speaker|Who|Name):\s([^,<(\[\n]*)"
     search = re.search(pattern, email, flags=re.IGNORECASE)
 
     # If no results found, regex did not work
