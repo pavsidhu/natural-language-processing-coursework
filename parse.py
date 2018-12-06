@@ -57,13 +57,13 @@ def tag_emails(emails, tags):
     return [tag_email(email, tags) for email in emails]
 
 
-def tag_email(email, tags):
+def tag_email(original_email, tags):
     """Tags a single email"""
 
-    email = tag_paragraphs(email)
+    email = tag_paragraphs(original_email)
     email = tag_sentences(email)
     email = tag_time(email)
-    email = tag_speaker(email, tags["speaker"])
+    email = tag_speaker(email, original_email, tags["speaker"])
     email = tag_location(email, tags["location"])
 
     return email
