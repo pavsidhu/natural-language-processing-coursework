@@ -6,10 +6,15 @@ __pycache__
 *.pyc
 .env
 
-# Source / Output data
+# VSCode
+.vscode
+
+
+# Source / output data
 training
 untagged
 output
 
-# VSCode
-.vscode
+# Stanford tagger
+english.all.3class.distsim.crf.ser.gz
+stanford-ner.jar
