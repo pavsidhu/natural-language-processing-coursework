@@ -23,7 +23,7 @@ def tag_sentences(email):
         # Tag the sentences and put them back in the email
         for sentence in sentences:
             # Remove the last character if it's a period for a better F1 score
-            sentence = sentence[:-1] if sentence[-1] == "." else sentence
+            sentence = sentence[:-1] if sentence[-1] in ".!?" else sentence
 
             tagged_sentence = str.format("<sentence>{}</sentence>", sentence)
             abstract = abstract.replace(sentence, tagged_sentence)
