@@ -3,7 +3,8 @@ from nltk.tokenize import word_tokenize
 import re
 
 
-def tag_speaker(email, tagged_speakers):
+
+def tag_speaker(email, original_email, stanford_tags, tagged_speakers):
     """
     Tag speaker:
         <speaker>{{ speaker }}</speaker>
