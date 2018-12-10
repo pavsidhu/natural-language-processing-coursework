@@ -9,14 +9,14 @@ __pycache__
 # VSCode
 .vscode
 
+# Stanford tagger
+english.all.3class.distsim.crf.ser.gz
+stanford-ner.jar
 
-# Source / output data
+# Data
 training
 untagged
 test_training
 test_untagged
 output
-
-# Stanford tagger
-english.all.3class.distsim.crf.ser.gz
-stanford-ner.jar
+GoogleNews-vectors-negative300.bin
