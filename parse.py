@@ -18,6 +18,14 @@ patterns = [str.format(r"<{}>([\S\s]+?)</{}>", tag, tag) for tag in tags]
 nested_tag_pattern = r"</?(?:" + r"|".join(tags) + r")>"
 
 
+# Initiate Stanford tagger
+stanford_classifier = getcwd() + "/english.all.3class.distsim.crf.ser.gz"
+stanford_ner_path = getcwd() + "/stanford-ner.jar"
+stanford_tagger = StanfordNERTagger(
+    stanford_classifier, stanford_ner_path, encoding="utf-8"
+)
+
+
 def extract_tag_data(emails):
     """Extracts all the data from the tags in each email"""
 
@@ -51,14 +59,6 @@ def remove_tags(emails):
         untagged_emails.append(email)
 
     return untagged_emails
-
-
-# Initiate Stanford tagger
-stanford_classifier = getcwd() + "/english.all.3class.distsim.crf.ser.gz"
-stanford_ner_path = getcwd() + "/stanford-ner.jar"
-stanford_tagger = StanfordNERTagger(
-    stanford_classifier, stanford_ner_path, encoding="utf-8"
-)
 
 
 def tag_with_stanford_tagger(emails):
