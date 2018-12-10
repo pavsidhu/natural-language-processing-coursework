@@ -6,10 +6,12 @@
 
 ### Downloads
 
-- Training emails should go in  `training/`
-- Untagged emails should go in  `untagged/`
+Place these downloads in the root folder.
+
+- Training emails should go in `training/`
+- Untagged emails should go in `untagged/`
 - Data sets
-  -  `GoogleNews-vectors-negative300.bin` 
+  - `GoogleNews-vectors-negative300.bin`
 - Stanford NER Tagger
   - `stanford-ner.jar`
   - `english.all.3class.distsim.crf.ser.gz`
