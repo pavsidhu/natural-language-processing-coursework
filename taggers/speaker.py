@@ -195,7 +195,6 @@ def get_speakers_using_sentence_detection(names, email):
     return speakers
 
 
-# TODO: Support titles
 def tag_speaker_using_name(name, email):
     """Adds the tags to the email for a given name"""
 
