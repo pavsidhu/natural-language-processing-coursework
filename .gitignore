@@ -16,7 +16,7 @@ stanford-ner.jar
 # Data
 training
 untagged
-test_training
+test_tagged
 test_untagged
 output
 GoogleNews-vectors-negative300.bin
