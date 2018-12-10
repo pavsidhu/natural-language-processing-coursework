@@ -1,7 +1,9 @@
+import sys
+
 from file_io import *
 from parse import *
 from f1_score import *
-import sys
+from ontology import *
 
 
 def main(training):
@@ -25,10 +27,13 @@ def main(training):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        print('Please specify either "train" or "test" as an argument')
+    if len(sys.argv) == 1 or not sys.argv[1] in ["train", "test", "ontology"]:
+        print('Please specify either "train", "test" or "ontology" as an argument')
         sys.exit()
 
     training = sys.argv[1] == "train"
 
-    main(training)
+    if sys.argv[1] == "ontology":
+        construct_ontology()
+    else:
+        main(training)

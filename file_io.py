@@ -4,7 +4,7 @@ from nltk.corpus.reader import PlaintextCorpusReader
 import os
 
 
-def get_emails(path):
+def get_emails(path, file_name=False):
     """
     Returns a list of readers for all the files in the path
     """
@@ -12,8 +12,13 @@ def get_emails(path):
     full_path = getcwd() + path
     files = [file for file in listdir(full_path) if isfile(join(full_path, file))]
 
-    readers = [PlaintextCorpusReader(full_path, file).raw() for file in files]
+    if file_name:
+        readers = [
+            (file, PlaintextCorpusReader(full_path, file).raw()) for file in files
+        ]
+        return readers
 
+    readers = [PlaintextCorpusReader(full_path, file).raw() for file in files]
     return readers
 
 

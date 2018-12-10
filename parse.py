@@ -98,6 +98,6 @@ def tag_email(original_email, stanford_tags, tags):
     email = tag_sentences(email)
     email = tag_time(email)
     email = tag_speaker(email, original_email, stanford_tags, tags["speaker"])
-    email = tag_location(email, tags["location"])
+    email = tag_location(email, original_email, stanford_tags, tags["location"])
 
     return email
