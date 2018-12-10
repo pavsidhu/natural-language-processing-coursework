@@ -94,6 +94,9 @@ def tag_emails(emails, tags):
 def tag_email(original_email, stanford_tags, tags):
     """Tags a single email"""
 
+    if not original_email:
+        return original_email
+
     email = tag_paragraphs(original_email)
     email = tag_sentences(email)
     email = tag_time(email)
