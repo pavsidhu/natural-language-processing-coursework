@@ -96,8 +96,6 @@ def tag_with_stanford_tagger(email, original_email, stanford_tags):
 
     unique_names = remove_duplicates(names)
 
-    # if len(unique_names) == 1:
-    #     email = tag_speaker_using_name(unique_names.pop(), email)
     if len(unique_names) > 0:
         names = find_speaker_from_names(unique_names, original_email)
 
