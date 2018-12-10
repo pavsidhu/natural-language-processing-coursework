@@ -2,7 +2,7 @@ from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 import re
 
-from utils import split_email, stringify_nested_array
+from utils import split_email, remove_duplicates
 
 
 def tag_speaker(email, original_email, stanford_tags, tagged_speakers):
@@ -12,6 +12,10 @@ def tag_speaker(email, original_email, stanford_tags, tagged_speakers):
     """
 
     email, success = tag_with_regex(email)
+    if success:
+        return email
+
+    email, success = tag_with_tagged_speakers(email, tagged_speakers)
     if success:
         return email
 
@@ -44,7 +48,24 @@ def tag_with_regex(email):
     return [email, True]
 
 
-# TODO: Handle multiple names
+def tag_with_tagged_speakers(email, tagged_speakers):
+    """Use the tagged dataset speakers to find a match"""
+
+    success = False
+
+    for speaker in tagged_speakers:
+        escaped_speaker = re.escape(speaker)
+        pattern = rf"(?<!<speaker>)({escaped_speaker})(?!</speaker>)"
+        replace = r"<speaker>\1</speaker>"
+
+        if re.search(pattern, email):
+            email = re.sub(pattern, replace, email, flags=re.IGNORECASE)
+            success = True
+            break
+
+    return [email, success]
+
+
 def tag_with_stanford_tagger(email, original_email, stanford_tags):
     """
     Uses the Stanford tagger as a last resort since it takes a long time to
@@ -73,7 +94,7 @@ def tag_with_stanford_tagger(email, original_email, stanford_tags):
         if name:
             names.append(name)
 
-    unique_names = remove_duplicates_from_name(names)
+    unique_names = remove_duplicates(names)
 
     # if len(unique_names) == 1:
     #     email = tag_speaker_using_name(unique_names.pop(), email)
@@ -84,28 +105,6 @@ def tag_with_stanford_tagger(email, original_email, stanford_tags):
             email = tag_speaker_using_name(name, email)
 
     return email
-
-
-def remove_duplicates_from_name(names):
-    stringified_names = set(stringify_nested_array(names))
-    # stringified_names = {v.lower(): v for v in stringified_names}.values()
-    unique_names = set()
-
-    # Remove duplicate names from names list such as single surnames
-    # that are already part of a full name in the list
-    for i, name in enumerate(stringified_names):
-        duplicate = False
-
-        # Loop through names and check it's not a substring of another
-        for j, stringified_name in enumerate(stringified_names):
-            if i != j and name.lower() in stringified_name.lower():
-                duplicate = True
-                break
-
-        if not duplicate:
-            unique_names.add(name)
-
-    return unique_names
 
 
 def find_speaker_from_names(names, original_email):
@@ -119,25 +118,9 @@ def find_speaker_from_names(names, original_email):
     if speaker:
         return [speaker]
 
-    # speaker = get_speakers_using_title(names, original_email)
-    # if speaker:
-    #     return [speaker]
-
     speakers = get_speakers_using_sentence_detection(names, original_email)
     if speakers:
         return speakers
-
-    # tokens = word_tokenize(original_email)
-    # tags = pos_tag(tokens)
-    # for name in names:
-    # for tag in pos_tag(tokens):
-    #     i = 0
-    #     found = False
-
-    #     while i <= len(name):
-    #         if tag[i] == name[i]:
-
-    #         i += 1
 
     return []
 

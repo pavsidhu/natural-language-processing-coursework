@@ -17,6 +17,10 @@ def tag_location(email, original_email, stanford_tags, tagged_locations):
         email = add_tags(email, location)
         return email
 
+    email, success = find_using_tagged_locations(email, tagged_locations)
+    if success:
+        return email
+
     location = find_using_patterns(original_email)
     if location:
         email = add_tags(email, location)
@@ -40,6 +44,33 @@ def find_using_regex(email):
     return search.group(1) if search else None
 
 
+def find_using_tagged_locations(email, tagged_locations):
+    """Use the tagged dataset locations to find a match"""
+
+    success = False
+
+    for location in tagged_locations:
+        escaped_location = re.escape(location)
+        pattern = rf"(?<!<location>)({escaped_location})(?!</location>)"
+        replace = r"<location>\1</location>"
+
+        if re.search(pattern, email):
+            email = re.sub(pattern, replace, email, flags=re.IGNORECASE)
+            success = True
+            break
+
+    return [email, success]
+
+
+def find_using_patterns(email):
+    """Use sentence/location patterns to find the right location"""
+
+    pattern = r"(?:\s|\n)(\S+\s?\d{4})"
+    search = re.search(pattern, email)
+
+    return search.group(1) if search else None
+
+
 def find_using_stanford_tagger(stanford_tags):
     """Use the Stanford tagger to chunk location words"""
 
@@ -57,9 +88,9 @@ def find_using_stanford_tagger(stanford_tags):
             locations.append(location)
 
     if not locations:
-        return locations
+        return None
 
-    # location = choose_best_location(locations)
+    location = choose_best_location(locations)
 
     return location
 
@@ -99,16 +130,8 @@ def choose_best_location(locations):
     return None
 
 
-def find_using_patterns(email):
-    """Use sentence/location patterns to find the right location"""
-
-    pattern = r"(?:\s|\n)(\S+\s?\d{4})"
-    search = re.search(pattern, email)
-
-    return search.group(1) if search else None
-
-
 def add_tags(email, location):
+    """Add tags to the email"""
     escaped_location = re.escape(location)
     pattern = rf"({escaped_location})"
     replace = r"<location>\1</location>"
