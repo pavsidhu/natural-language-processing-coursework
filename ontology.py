@@ -25,11 +25,7 @@ def construct_ontology():
 
     print("Classifying emails...")
     classified_emails = [
-        {
-            "name": email[0],
-            "email": get_posted_by(email[1]),
-            "topic": classify_email(email[1], model, stopwords),
-        }
+        {"name": email[0], "topic": classify_email(email[1], model, stopwords)}
         for email in emails
     ]
 
@@ -130,18 +126,6 @@ def get_type_header(email):
 
     if search:
         return search.group(1).lstrip()
-
-    return None
-
-
-def get_posted_by(email):
-    """Gets the PostedBy header from an email"""
-
-    pattern = r"PostedBy:\s(.*)\n"
-    search = re.search(pattern, email)
-
-    if search:
-        return search.group(1)
 
     return None
 
